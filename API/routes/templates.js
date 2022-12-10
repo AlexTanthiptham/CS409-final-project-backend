@@ -29,20 +29,22 @@ router.get('/', async (req, res) => {
     }
 
     try {
-        const tasks = await Task.find(where, select, cursor)
+        const templates = await Template.find(where, select, cursor)
         if (count == true) {
-            res.status(200).json({ message: "OK", data: tasks.length})
+            res.status(200).json({ message: "OK", data: templates.length})
         } else {
-            res.status(200).json({ message: "OK", data: tasks})
+            res.status(200).json({ message: "OK", data: templates})
         }
     } catch (err) {
         res.status(500).json({ message: err.message })
     }
 })
 
-// GET by ID
+// GET by ID - Retrieves URL of template
 router.get('/:id', getTemplate, (req, res) => {
-    res.status(200).json({ message: "OK", data: res.task})
+    const id = new mongodb.ObjectId(req.params.id);
+
+    res.status(200).json({ message: "OK", data: res.templates})
 })
 
 // POST new template
@@ -57,7 +59,7 @@ router.post('/', async (req, res) => {
 
     const template = new Template({
         documentName: req.body.documentName,
-        documentURL: req.body.description,
+        PDFdata: req.body.PDFdata,
         tags: req.body.tags
     })
 
@@ -81,13 +83,12 @@ router.put('/:id', getTemplate, async (req, res) => {
     // Filters out any inputs fields that shouldn't be altered
     const updates = {
         documentName: req.body.documentName,
-        documentURL: req.body.description,
         tags: req.body.tags
     }
 
     // Replace all other details
     try {
-        await Task.findByIdAndUpdate(req.params.id, updates).exec()
+        await Template.findByIdAndUpdate(req.params.id, updates).exec()
         res.status(200).json({ message: "OK", data: updates})
     } catch (err) {
         res.status(500).json({ message: err.message })
@@ -97,23 +98,33 @@ router.put('/:id', getTemplate, async (req, res) => {
 // DELETE by ID
 router.delete('/:id', getTemplate, async (req, res) => {
     try {
-        await res.template.remove()
+        await Template.remove({_id: req.params.id})
         res.status(200).json({ message: 'Deleted Template', data: req.params.id})
     } catch (err) {
         res.status(500).json({ message: err.message })
     }
 })
 
-// [Middleware] Retrieve Task by ID & handle 404
-async function getTemplate(req, res, next) {
+// [Middleware] Handle server errors
+router.use((err, req, res, next) => {
+    // Handle MongoDB & querying errors
+    if (err instanceof mongodb.MongoError) {
+        res.status(500).json({ message: err.message })
+    } else if (err instanceof mongodb.GridFSBucket.FileNotFoundError) {
+        res.status(404).json({ message: 'Template not found'})
+    } else {
+        res.status(500).json({ message: err.message })
+    }
+})
 
+
+async function getTemplate(req, res, next) {
     // Query String handling -> Should clean up as a helper func
     let {select} = req.query
     // Parsing Select parameters
     if (select != null) {
         select = JSON.parse(select)
     }
-
     let template
     try {
         template = await Template.findById(req.params.id, select)

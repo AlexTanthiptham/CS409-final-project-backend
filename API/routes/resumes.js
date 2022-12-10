@@ -4,6 +4,7 @@ const User = require('../models/user.js')
 const Comment = require('../models/comment.js')
 const Resume = require('../models/resume.js')
 
+
 // GET all or a given query string
 router.get('/', async (req, res) => {
     // Query String handling -> TODO: clean up as a helper func
@@ -55,7 +56,7 @@ router.post('/', async (req, res) => {
     }
     const resume = new Resume({
         userId: req.body.userId,
-        documentURL: req.body.documentURL,
+        PDFdata: req.body.PDFdata,
         documentName: req.body.documentName,
         anonymity: req.body.anonymity,
         tags: req.body.tags,
@@ -64,17 +65,15 @@ router.post('/', async (req, res) => {
 
     try {
         const newResume = await resume.save()
-        console.log(newResume) // DEBUG - REMOVE BEFORE PRODUCTION
 
-        // Successful Upload: Add resumeId to the User variables's JSON 
+        // Successful Upload: Add resumeId to the firebase user data
         currUser.commentIds.push(newResume._id)
+        console.log(newResume) // DEBUG - Check correct file creation
 
-        const assign = { // TODO - Check if this is strictly necessary
-            commentIds: currUser.commentIds
-        }
-
-        try {
-            await User.findByIdAndUpdate(currUser._id, assign).exec()
+        // DEBUG - Stop gap measure until firebase auth is implemented
+        // TODO - Convert to updating firebase data instead.
+        try { // Set up 2-way referencing with assigned user
+            await User.findByIdAndUpdate(currUser._id, currUser.commentIds).exec()
         } catch (err) {
             return res.status(500).json({ message: err.message })
         }

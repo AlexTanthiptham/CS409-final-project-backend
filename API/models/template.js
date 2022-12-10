@@ -7,8 +7,8 @@ var TemplateSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    documentURL: { // Placeholder until we settle on a format
-        type: String,
+    PDFdata: { 
+        type: Buffer, 
         required: true
     },
     tags: {

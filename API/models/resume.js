@@ -2,13 +2,14 @@
 var mongoose = require('mongoose');
 
 // Define our user schema
+
 var ResumeSchema = new mongoose.Schema({
     userId: { // Referenced w/ uploader User
         type: String,
         required: true
     },
-    documentURL: { // Placeholder until we settle on a format
-        type: String, // Potentially accessed by URL
+    PDFdata: { 
+        type: Buffer, 
         required: true
     },
     documentName: {
