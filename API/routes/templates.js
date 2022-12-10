@@ -59,8 +59,7 @@ router.get("/:id", getTemplate, (req, res) => {
     "Content-Type": "application/pdf", //here you set the content type to pdf
     "Content-Disposition": "inline; filename=" + res.template.documentName, //if you change from inline to attachment if forces the file to download but inline displays the file on the browser
   });
-  res.send(res.template.PDFdata);
-
+  // To display in chrome PDF viewer: just don't res.send or res.render - leave it as is.
   res
     .status(200)
     .json({ message: "OK - this is a get request by ID", data: res.templates });
