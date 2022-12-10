@@ -67,13 +67,17 @@ router.get("/:id", getTemplate, (req, res) => {
 
 // POST new template
 // NOTE: Field submitted in POST request must have key 'pdf' for file
+// TODO: Implement filter to only allow PDF file uploads
 router.post("/", upload.single("pdf"), async (req, res) => {
   console.log(req);
   console.log("Buffer: ");
   console.log(req.file.buffer);
   // NOTE: Blocking duplicate template names - remove if not needed
   if (req.body.documentName != null) {
-    let checkDuplicate = await Template.find({ email: req.body.documentName });
+    let checkDuplicate = await Template.find({
+      documentName: req.body.documentName,
+    });
+    console.log("Duplicates: ", checkDuplicate.length);
     if (checkDuplicate.length != 0) {
       return res
         .status(400)
