@@ -1,0 +1,61 @@
+IMPORTANT: Implement awful, janky solutions then fix them later rather than not at all.
+
+[TEMP] Planning Text
+Implement to-do list database w/ multiple users and associated tasks. User schema and task schema.
+- User collection and task collection
+- 4 End points w/ actions GET, POST, PUT, DELETE
+
+Testing:
+- Check the different localhost addresses provided on the MP website to see what needs to be done.
+- Testing deliverables for this MP is done entirely by Postman. No UI implementation needed.
+
+POSTMAN: Allows easier viewing of .json response than just putting in URL bar of browser
+- Create a collection, add requests (the URL for the API cal)
+
+Implementation To Do:
+- [DONE] Implement user & task schemas 
+    - [DONE] Name and email are required for user
+    - [DONE] Name and deadline required for task
+    - [DONE] No duplicate emails allowed for user --> Implement as PUT midware
+- [DONE] Implement user & task routing
+    - [DONE] Implement each method
+    - [DONE] Test basic return for each method (OK/Error Message & Json in data field)
+    - [DONE] Test basic database script usage
+    - [DONE] Implement query stringing
+- Test & Implement 2-way reference for special cases [DONE]
+- Clean up implementation notes before submission
+- Clean up routing in index.js
+- Clean up redundancy in task.js PUT
+- Clean up Query String handling as helper function or middleware
+
+All other fields that the user did not specify should be set to reasonable default values.
+
+
+Suspected & known issues:
+- BUG: dbFill.py inconsistently crashes app in very rare cases. Unclear what causes this
+- EDGE: 2-way ref for user PUT. If tasks were initially assigned to different user, should refer back to that user and clear from pending task as well
+- BUG: Faulty querying is not always successful. Unclear conditions for failure.
+
+URGENT TO DO:
+- Fix PUT to match new specifications
+    - For users
+        - Check if pending task is editted before doing 2 way ref [DONE]
+        - Save the updated task [DONE]
+        - Implement for DELETE [DONE]
+    - For tasks
+        - Implement for PUT
+        - Implement for DELETE 
+
+Testing for unfilled parameters:
+If pendingTask = [] --> console logs []
+If pendingTask not given --> console logs undefined
+If statement can detect undefined but not empty arrays.
+Use undefined to check for unprovided fields.
+
+NOTE: Within tasks.js currUser._id is an object, must convert to string for use in findById
+
+BEFORE:
+{
+    "assignedUser": "",
+    "assignedUserName": "unassigned"
+}

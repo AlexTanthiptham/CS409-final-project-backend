@@ -1,4 +1,3 @@
-// Derived from MP3, updated
 // Get the packages we need
 var express = require('express'),
     router = express.Router(),

@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const Template = require('../models/templates.js')
+const Template = require('../models/template.js')
 
 // GET all or a given query string
 router.get('/', async (req, res) => {

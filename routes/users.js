@@ -67,7 +67,7 @@ router.post('/', async (req, res) => {
     const user = new User({
         email: req.body.email,
         username: req.body.username,
-        fullanme: req.body.fullname,
+        fullname: req.body.fullname,
         dateCreated: req.body.dateCreated
     })
 
