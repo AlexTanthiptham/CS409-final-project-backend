@@ -65,17 +65,6 @@ router.get("/:id", (req, res) => {
         error: err,
       });
     });
-
-  //   res.set({
-  //     "Content-Type": "application/pdf", //here you set the content type to pdf
-  //     // "Content-Disposition": "inline; filename=" + res.template.documentName, //if you change from inline to attachment if forces the file to download but inline displays the file on the browser
-  //   });
-  //   // To display in chrome PDF viewer: just don't res.send or res.render - leave it as is.
-  //   res.send(res.templates.PDFdata);
-
-  //   res
-  //     .status(200)
-  //     .json({ message: "OK - this is a get request by ID", data: res.templates });
 });
 
 // POST new template
@@ -97,7 +86,6 @@ router.post("/", upload.single("pdf"), async (req, res) => {
         .json({ message: "Template with requested name already exists" });
     }
   }
-
   const template = new Template({
     documentName: req.body.documentName,
     PDFdata: req.file.buffer,
@@ -149,18 +137,6 @@ router.delete("/:id", getTemplate, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
-// // [Middleware] Handle server errors
-// router.use((err, req, res, next) => {
-//   // Handle MongoDB & querying errors
-//   if (err instanceof mongodb.MongoError) {
-//     res.status(500).json({ message: err.message });
-//   } else if (err instanceof mongodb.GridFSBucket.FileNotFoundError) {
-//     res.status(404).json({ message: "Template not found" });
-//   } else {
-//     res.status(500).json({ message: err.message });
-//   }
-// });
 
 async function getTemplate(req, res, next) {
   // Query String handling -> Should clean up as a helper func

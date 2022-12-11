@@ -3,29 +3,23 @@ var mongoose = require("mongoose");
 
 // Define our user schema
 var UserSchema = new mongoose.Schema({
+  firebaseId: {
+    // Can't be editted after POST
+    type: String,
+    required: true,
+  },
   email: {
+    // Can't be editted after POST
     type: String,
     required: true,
   },
   username: {
     type: String,
-    required: true,
-  },
-  fullname: {
-    type: String,
-    required: true,
+    default: "Anonymous",
   },
   aboutme: {
     type: String,
     default: "",
-  },
-  resumeIds: {
-    // Referenced w/ uploaded Resumes - empty by default
-    type: [String],
-  },
-  commentIds: {
-    // Referenced w/ posted Comments - empty by default
-    type: [String],
   },
   dateCreated: {
     type: Date,
