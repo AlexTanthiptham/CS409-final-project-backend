@@ -48,11 +48,11 @@ router.get("/:id", getUser, (req, res) => {
 });
 
 // POST new user
-// NOTE: Users should be created by w/ no aboutme, comments and resumes. Assign these in PUT.
+// Takes only firebaseId, email and username
 router.post("/", async (req, res) => {
   // Check validity of new username & email
-
-  let checkDuplicate = await User.find({ email: req.body.firebaseId });
+  console.log(req.body);
+  let checkDuplicate = await User.find({ firebaseId: req.body.firebaseId });
   if (checkDuplicate.length != 0) {
     return res
       .status(400)
