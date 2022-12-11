@@ -52,17 +52,36 @@ router.get("/", async (req, res) => {
 });
 
 // GET by ID - Retrieves URL of template
-router.get("/:id", getTemplate, (req, res) => {
+router.get("/:id", (req, res) => {
   console.log("Get by ID endpoint");
   // Implementation 1
-  res.set({
-    "Content-Type": "application/pdf", //here you set the content type to pdf
-    "Content-Disposition": "inline; filename=" + res.template.documentName, //if you change from inline to attachment if forces the file to download but inline displays the file on the browser
-  });
-  // To display in chrome PDF viewer: just don't res.send or res.render - leave it as is.
-  res
-    .status(200)
-    .json({ message: "OK - this is a get request by ID", data: res.templates });
+  Template.findById(req.params.id)
+    .then((template) => {
+      if (!template) {
+        return res.status(404).json({
+          message: "PDF not found",
+        });
+      }
+      res.set("Content-Type", "application/pdf");
+      res.send(template.PDFdata);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
+
+  //   res.set({
+  //     "Content-Type": "application/pdf", //here you set the content type to pdf
+  //     // "Content-Disposition": "inline; filename=" + res.template.documentName, //if you change from inline to attachment if forces the file to download but inline displays the file on the browser
+  //   });
+  //   // To display in chrome PDF viewer: just don't res.send or res.render - leave it as is.
+  //   res.send(res.templates.PDFdata);
+
+  //   res
+  //     .status(200)
+  //     .json({ message: "OK - this is a get request by ID", data: res.templates });
 });
 
 // POST new template

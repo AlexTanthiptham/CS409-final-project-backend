@@ -1,24 +1,24 @@
 // Load required packages
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 // Define our user schema
 var TemplateSchema = new mongoose.Schema({
-    documentName: {
-        type: String,
-        required: true
-    },
-    PDFdata: { 
-        type: Buffer, 
-        required: true
-    },
-    tags: {
-        type: [String],
-    },
-    dateCreated: {
-        type: Date,
-        default: Date.now
-    }
+  documentName: {
+    type: String,
+    // required: true
+  },
+  PDFdata: {
+    type: Buffer,
+    required: true,
+  },
+  tags: {
+    type: [String],
+  },
+  dateCreated: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 // Export the Mongoose model
-module.exports = mongoose.model('Template', TemplateSchema);
+module.exports = mongoose.model("Template", TemplateSchema);
