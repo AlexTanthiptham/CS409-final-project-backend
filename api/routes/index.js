@@ -1,7 +1,7 @@
 // All app endpoints
 
 module.exports = function (app, router) {
-  app.use("/api", require("./home.js")(router));
+  app.use("/", require("./home.js")(router));
 
   const usersRouter = require("./users");
   const resumesRouter = require("./resumes");
@@ -9,8 +9,8 @@ module.exports = function (app, router) {
   const templatesRouter = require("./templates");
 
   // Stopgap solution - Fix this later
-  app.use("/api/users", usersRouter);
-  app.use("/api/resumes", resumesRouter);
-  app.use("/api/comments", commentsRouter);
-  app.use("/api/templates", templatesRouter);
+  app.use("/users", usersRouter);
+  app.use("/resumes", resumesRouter);
+  app.use("/comments", commentsRouter);
+  app.use("/templates", templatesRouter);
 };
