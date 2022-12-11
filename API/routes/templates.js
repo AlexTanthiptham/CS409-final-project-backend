@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Template = require("../models/template.js");
+
 const multer = require("multer");
 const upload = multer(); // NOTE: To get buffer data, do not specify a destination
-
-const mongodb = require("mongodb");
 
 // GET all or a given query string
 // TODO: Implement fields search to not retrieve binary data when unneccessary
@@ -45,10 +44,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET by ID - Retrieves URL of template
-router.get("/:id", (req, res) => {
-  console.log("Get by ID endpoint");
-  // Implementation 1
+// GET by id: Display PDF on browser (for iframes)
+router.get("/pdf/:id", (req, res) => {
   Template.findById(req.params.id)
     .then((template) => {
       if (!template) {
@@ -67,10 +64,16 @@ router.get("/:id", (req, res) => {
     });
 });
 
+// GET by id: Return information
+router.get("/:id", getTemplate, (req, res) => {
+  res.status(200).json({ message: "OK", data: res.template });
+});
+
 // POST new template
 // NOTE: Field submitted in POST request must have key 'pdf' for file
 // TODO: Implement filter to only allow PDF file uploads
 router.post("/", upload.single("pdf"), async (req, res) => {
+  //   console.log(req.file);
   console.log(req.body);
   console.log("Buffer: ");
   console.log(req.file);
@@ -107,12 +110,12 @@ router.put("/:id", getTemplate, async (req, res) => {
     documentName: req.body.documentName,
     _id: { $ne: res.user._id },
   });
+
   if (duplicate.length != 0) {
     return res
       .status(400)
       .json({ message: "Template with requested name already exists" });
   }
-
   // Filters out any inputs fields that shouldn't be altered
   const updates = {
     documentName: req.body.documentName,

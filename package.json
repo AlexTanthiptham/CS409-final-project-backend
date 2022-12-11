@@ -6,8 +6,9 @@
     "James Lee <jwlee11@illinois.edu>",
     "Sujay Khandekar <khandek2@illinois.edu>"
   ],
+  "main": "api/index.js",
   "scripts": {
-    "start": "nodemon --exec node server.js"
+    "start": "nodemon --exec node api/index.js"
   },
   "babel": {
     "presets": [

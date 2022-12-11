@@ -5,7 +5,7 @@ var mongoose = require("mongoose");
 var TemplateSchema = new mongoose.Schema({
   documentName: {
     type: String,
-    // required: true
+    required: true,
   },
   PDFdata: {
     type: Buffer,
