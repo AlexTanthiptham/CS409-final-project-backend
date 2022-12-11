@@ -6,12 +6,6 @@ const upload = multer(); // NOTE: To get buffer data, do not specify a destinati
 
 const mongodb = require("mongodb");
 
-function uploadFiles(req, res) {
-  console.log(req.body);
-  console.log(req.files);
-  res.json({ message: "Successfully uploaded files" });
-}
-
 // GET all or a given query string
 // TODO: Implement fields search to not retrieve binary data when unneccessary
 router.get("/", async (req, res) => {
@@ -88,9 +82,9 @@ router.get("/:id", (req, res) => {
 // NOTE: Field submitted in POST request must have key 'pdf' for file
 // TODO: Implement filter to only allow PDF file uploads
 router.post("/", upload.single("pdf"), async (req, res) => {
-  console.log(req);
+  console.log(req.body);
   console.log("Buffer: ");
-  console.log(req.file.buffer);
+  console.log(req.file);
   // NOTE: Blocking duplicate template names - remove if not needed
   if (req.body.documentName != null) {
     let checkDuplicate = await Template.find({
