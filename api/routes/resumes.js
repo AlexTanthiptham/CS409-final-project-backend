@@ -19,10 +19,11 @@ router.get("/", async (req, res) => {
   if (sort != null) {
     sort = JSON.parse(sort);
   }
-  // Parsing Select parameters
-  if (select != null) {
-    select = JSON.parse(select);
-  }
+
+  // Parsing Select parameters - Deprecated
+  //   if (select != null) {
+  //     select = JSON.parse(select);
+  //   }
   const cursor = {
     limit,
     skip,
@@ -34,7 +35,7 @@ router.get("/", async (req, res) => {
   }
 
   try {
-    const resumes = await Resume.find(where, select, cursor);
+    const resumes = await Resume.find(where, { PDFdata: 0 }, cursor);
     if (count == true) {
       res.status(200).json({ message: "OK", data: resumes.length });
     } else {
@@ -79,6 +80,8 @@ router.post("/", upload.single("pdf"), async (req, res) => {
   console.log(req.file);
   console.log("res.body: ")
   console.log(req.body);
+  console.log("req.body.firebaseId");
+  console.log(req.body.firebaseId);
   if (currUser == null) {
     return res.status(400).json({ message: "Parent User does not exist" });
   }
@@ -94,7 +97,7 @@ router.post("/", upload.single("pdf"), async (req, res) => {
 
   try {
     const newResume = await resume.save();
-    res.status(201).json({ message: "OK", data: newResume });
+    res.status(201).json({ message: "OK", data: newResume.documentName });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -121,7 +124,7 @@ router.put("/:id", getResume, async (req, res) => {
 // 2-way reference: Delete comments, update User's commentIds and resumeIds
 router.delete("/:id", getResume, async (req, res) => {
   // Unassign resume itself and attached comments from User
-  await Comment.deleteMany({ resumeId: req.id }).exec();
+  await Comment.deleteMany({ resumeId: req.params.id }).exec();
 
   try {
     await res.resume.remove();
@@ -134,15 +137,15 @@ router.delete("/:id", getResume, async (req, res) => {
 // [Middleware] Retrieve Resume by ID & handle 404
 async function getResume(req, res, next) {
   // Query String handling -> Should clean up as a helper func
-  let { select } = req.query;
-  // Parsing Select parameters
-  if (select != null) {
-    select = JSON.parse(select);
-  }
+  //   let { select } = req.query;
+  //   // Parsing Select parameters
+  //   if (select != null) {
+  //     select = JSON.parse(select);
+  //   }
 
   let resume;
   try {
-    resume = await Resume.findById(req.params.id, select);
+    resume = await Resume.findById(req.params.id, { PDFdata: 0 });
     if (resume == null) {
       return res.status(404).json({ message: "Resume not found" });
     }

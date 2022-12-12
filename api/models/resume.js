@@ -23,6 +23,7 @@ var ResumeSchema = new mongoose.Schema({
   },
   tags: {
     type: [String],
+    default: [""],
   },
   dateCreated: {
     type: Date,

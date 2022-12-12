@@ -49,38 +49,72 @@ router.get("/:id", getComment, (req, res) => {
   res.status(200).json({ message: "OK", data: res.comment });
 });
 
-// POST new comment
+// POST new comment or overwrite old comment
 router.post("/", async (req, res) => {
-  // Check if assignedUser - assignedUserName combination exists
-  let currUser = await User.find({ firebaseId: req.firebaseId });
-  if (currUser == null) {
-    return res.status(400).json({ message: "Parent User does not exist" });
-  }
-
-  let currResume = await Resume.findById(req.body.resumeId);
+  // Check if the requested resume exists
+  let currResume = await Resume.findById(req.body.resumeId, { PDFdata: 0 });
   if (currResume == null) {
     return res.status(400).json({ message: "Parent resume does not exist" });
   }
 
-  const comment = new Comment({
-    firebaseId: req.body.firebaseId,
-    resumeId: req.body.resumeId,
-    content: req.body.content,
-    rating: req.body.rating,
-    dateCreated: req.body.dateCreated,
+  // Check if requested user exists and hasn't posted on the resume yet
+  let currUser = await User.findOne({ firebaseId: req.body.firebaseId });
+  if (currUser == null) {
+    return res.status(400).json({ message: "Parent User does not exist" });
+  }
+  console.log("First validity checks done");
+  // If User has already posted, overwrite old post
+  let duplicate = await Comment.find({
+    $and: [
+      { firebaseId: req.body.firebaseId },
+      { resumeId: req.body.resumeId },
+    ],
   });
+  console.log("Scan for duplicates: " + duplicate.length);
+  console.log(duplicate);
 
-  try {
-    const newComment = await comment.save();
-    console.log(newComment); // DEBUG - REMOVE BEFORE PRODUCTION
-    res.status(201).json({ message: "OK", data: newComment });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  // Initial review, treat as POST request
+  if (duplicate.length == 0) {
+    console.log("No Duplicates");
+    const comment = new Comment({
+      firebaseId: req.body.firebaseId,
+      resumeId: req.body.resumeId,
+      content: req.body.content,
+      rating: req.body.rating,
+      dateCreated: req.body.dateCreated,
+    });
+
+    try {
+      const newComment = await comment.save();
+      res.status(201).json({ message: "OK", data: newComment });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+  // Subsequent review, treat as PUT request
+  else if (duplicate.length == 1) {
+    console.log("One Duplicate - Updating Post");
+    console.log(duplicate[0]._id);
+    const updates = {
+      content: req.body.content, // NOTE: Test to see if these are overwritten when no inputs given
+      rating: req.body.rating,
+    };
+
+    try {
+      await Comment.findByIdAndUpdate(duplicate[0]._id, updates).exec();
+      res.status(200).json({ message: "OK", data: updates });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  } else {
+    res
+      .status(500)
+      .json({ message: "Something has gone wrong - contact an admin" });
   }
 });
 
 // PUT replace details by ID
-// Alters only content and rating
+// Deprecated - unused outside of debug purposes
 router.put("/:id", getComment, async (req, res) => {
   // NOTE: Until end of put request; res = old data , req = new data
 

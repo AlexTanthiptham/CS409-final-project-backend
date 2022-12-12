@@ -19,10 +19,10 @@ router.get("/", async (req, res) => {
     sort = JSON.parse(sort);
   }
   // Parsing Select parameters
-  if (select != null) {
-    select = JSON.parse(select);
-  }
-  
+  //   if (select != null) {
+  //     select = JSON.parse(select);
+  //   }
+
   const cursor = {
     limit,
     skip,
@@ -34,7 +34,7 @@ router.get("/", async (req, res) => {
   }
 
   try {
-    const templates = await Template.find(where, select, cursor);
+    const templates = await Template.find(where, { PDFdata: 0 }, cursor);
     if (count == true) {
       res.status(200).json({ message: "OK", data: templates.length });
     } else {
@@ -147,14 +147,14 @@ router.delete("/:id", getTemplate, async (req, res) => {
 
 async function getTemplate(req, res, next) {
   // Query String handling -> Should clean up as a helper func
-  let { select } = req.query;
-  // Parsing Select parameters
-  if (select != null) {
-    select = JSON.parse(select);
-  }
+  //   let { select } = req.query;
+  //   // Parsing Select parameters
+  //   if (select != null) {
+  //     select = JSON.parse(select);
+  //   }
   let template;
   try {
-    template = await Template.findById(req.params.id, select);
+    template = await Template.findById(req.params.id, { PDFdata: 0 });
     if (template == null) {
       return res.status(404).json({ message: "Template not found" });
     }
