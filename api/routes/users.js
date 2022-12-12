@@ -104,8 +104,8 @@ router.put("/:id", async (req, res) => {
 // 2-way reference: Delete resumes and comments
 router.delete("/:id", getUser, async (req, res) => {
   // Delete all linked resumes and comments
-  await Comment.deleteMany({ userId: req.id }).exec();
-  await Resume.deleteMany({ userId: req.id }).exec();
+  await Comment.deleteMany({ where: { firebaseId: res.firebaseId } }).exec();
+  await Resume.deleteMany({ where: { firebaseId: res.firebaseId } }).exec();
 
   try {
     await res.user.remove();

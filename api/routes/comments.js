@@ -52,8 +52,8 @@ router.get("/:id", getComment, (req, res) => {
 // POST new comment
 router.post("/", async (req, res) => {
   // Check if assignedUser - assignedUserName combination exists
-  let currUser = await User.find({ firebaseId: req.firebaseId });
-  if (currUser == null) {
+  let currUser = await User.findOne({ where: { firebaseId: req.firebaseId } });
+  if (currUser.length == 0) {
     return res.status(400).json({ message: "Parent User does not exist" });
   }
 

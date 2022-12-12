@@ -72,10 +72,10 @@ router.get("/:id", getResume, (req, res) => {
 
 // POST new resume
 router.post("/", upload.single("pdf"), async (req, res) => {
-  let currUser = await User.find({ firebaseId: req.firebaseId });
+  let currUser = await User.findOne({ where: { firebaseId: req.firebaseId } });
   console.log(currUser);
-  console.log(currUser.length);
-  if (currUser.length == 0) {
+  console.log(req.body.firebaseId);
+  if (currUser == null) {
     return res.status(400).json({ message: "Parent User does not exist" });
   }
 
@@ -90,7 +90,7 @@ router.post("/", upload.single("pdf"), async (req, res) => {
 
   try {
     const newResume = await resume.save();
-    res.status(201).json({ message: "OK", data: newResume });
+    res.status(201).json({ message: "OK", data: newResume.documentName });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -117,7 +117,7 @@ router.put("/:id", getResume, async (req, res) => {
 // 2-way reference: Delete comments, update User's commentIds and resumeIds
 router.delete("/:id", getResume, async (req, res) => {
   // Unassign resume itself and attached comments from User
-  await Comment.deleteMany({ resumeId: req.id }).exec();
+  await Comment.deleteMany({ where: { resumeId: req.params.id } }).exec();
 
   try {
     await res.resume.remove();
