@@ -5,7 +5,16 @@ const Comment = require("../models/comment.js");
 const Resume = require("../models/resume.js");
 
 const multer = require("multer");
-const upload = multer(); // NOTE: To get buffer data, do not specify a destination
+const upload = multer({
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype == "application/pdf") {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      return cb(new Error("Only PDF files are allowed!"));
+    }
+  },
+}); // NOTE: To get buffer data, do not specify a destination
 
 // GET all or a given query string
 router.get("/", async (req, res) => {
@@ -76,9 +85,9 @@ router.post("/", upload.single("pdf"), async (req, res) => {
   let currUser = await User.findOne({ firebaseId: req.firebaseId });
   console.log("CUR USER: " + currUser);
   // console.log(currUser.length);
-  console.log("res.file: ")
+  console.log("res.file: ");
   console.log(req.file);
-  console.log("res.body: ")
+  console.log("res.body: ");
   console.log(req.body);
   console.log("req.body.firebaseId");
   console.log(req.body.firebaseId);

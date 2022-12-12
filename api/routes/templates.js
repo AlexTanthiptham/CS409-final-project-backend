@@ -3,7 +3,16 @@ const router = express.Router();
 const Template = require("../models/template.js");
 
 const multer = require("multer");
-const upload = multer(); // NOTE: To get buffer data, do not specify a destination
+const upload = multer({
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype == "application/pdf") {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      return cb(new Error("Only PDF files are allowed!"));
+    }
+  },
+}); // NOTE: To get buffer data, do not specify a destination
 
 // GET all or a given query string
 // TODO: Implement fields search to not retrieve binary data when unneccessary
