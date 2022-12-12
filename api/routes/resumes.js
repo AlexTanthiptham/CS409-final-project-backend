@@ -19,10 +19,11 @@ router.get("/", async (req, res) => {
   if (sort != null) {
     sort = JSON.parse(sort);
   }
-  // Parsing Select parameters
-  if (select != null) {
-    select = JSON.parse(select);
-  }
+
+  // Parsing Select parameters - Deprecated
+  //   if (select != null) {
+  //     select = JSON.parse(select);
+  //   }
   const cursor = {
     limit,
     skip,
@@ -34,7 +35,7 @@ router.get("/", async (req, res) => {
   }
 
   try {
-    const resumes = await Resume.find(where, select, cursor);
+    const resumes = await Resume.find(where, { PDFdata: 0 }, cursor);
     if (count == true) {
       res.status(200).json({ message: "OK", data: resumes.length });
     } else {
@@ -130,15 +131,15 @@ router.delete("/:id", getResume, async (req, res) => {
 // [Middleware] Retrieve Resume by ID & handle 404
 async function getResume(req, res, next) {
   // Query String handling -> Should clean up as a helper func
-  let { select } = req.query;
-  // Parsing Select parameters
-  if (select != null) {
-    select = JSON.parse(select);
-  }
+  //   let { select } = req.query;
+  //   // Parsing Select parameters
+  //   if (select != null) {
+  //     select = JSON.parse(select);
+  //   }
 
   let resume;
   try {
-    resume = await Resume.findById(req.params.id, select);
+    resume = await Resume.findById(req.params.id, { PDFdata: 0 });
     if (resume == null) {
       return res.status(404).json({ message: "Resume not found" });
     }
