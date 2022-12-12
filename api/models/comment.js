@@ -3,7 +3,7 @@ var mongoose = require("mongoose");
 
 // Define our user schema
 var CommentSchema = new mongoose.Schema({
-  userId: {
+  firebaseId: {
     // ID of parent user
     type: String,
     required: true,

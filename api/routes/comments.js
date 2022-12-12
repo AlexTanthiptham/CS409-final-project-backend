@@ -52,7 +52,7 @@ router.get("/:id", getComment, (req, res) => {
 // POST new comment
 router.post("/", async (req, res) => {
   // Check if assignedUser - assignedUserName combination exists
-  let currUser = await User.findById(req.body.userId);
+  let currUser = await User.find({ firebaseId: req.firebaseId });
   if (currUser == null) {
     return res.status(400).json({ message: "Parent User does not exist" });
   }
@@ -63,7 +63,7 @@ router.post("/", async (req, res) => {
   }
 
   const comment = new Comment({
-    userId: req.body.userId,
+    firebaseId: req.body.firebaseId,
     resumeId: req.body.resumeId,
     content: req.body.content,
     rating: req.body.rating,

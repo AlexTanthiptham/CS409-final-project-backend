@@ -72,7 +72,7 @@ router.get("/:id", getResume, (req, res) => {
 
 // POST new resume
 router.post("/", upload.single("pdf"), async (req, res) => {
-  let currUser = await User.find({ firebaseId: req.userId });
+  let currUser = await User.find({ firebaseId: req.firebaseId });
   if (currUser == null) {
     console.log(req.body);
     console.log("Full req");
@@ -81,7 +81,7 @@ router.post("/", upload.single("pdf"), async (req, res) => {
   }
 
   const resume = new Resume({
-    userId: req.body.userId,
+    firebaseId: req.body.firebaseId,
     PDFdata: req.file.buffer,
     documentName: req.body.documentName,
     anonymity: req.body.anonymity,
