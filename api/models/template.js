@@ -13,6 +13,7 @@ var TemplateSchema = new mongoose.Schema({
   },
   tags: {
     type: [String],
+    default: [""],
   },
   dateCreated: {
     type: Date,
