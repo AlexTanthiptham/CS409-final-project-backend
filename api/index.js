@@ -33,7 +33,8 @@ app.use(
   })
 );
 app.use(bodyParser.json());
-
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 // Use routes as a module (see index.js)
 require("./routes")(app, router);
 

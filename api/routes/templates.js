@@ -75,6 +75,8 @@ router.get("/:id", getTemplate, (req, res) => {
 // TODO: Implement filter to only allow PDF file uploads
 router.post("/", upload.single("pdf"), async (req, res) => {
   //   console.log(req.file);
+  console.log("Req: ");
+  console.log(req);
   console.log("Req.Body: ");
   console.log(req.body);
   console.log("Req.File: ");

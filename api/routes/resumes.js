@@ -72,10 +72,14 @@ router.get("/:id", getResume, (req, res) => {
 
 // POST new resume
 router.post("/", upload.single("pdf"), async (req, res) => {
-  let currUser = await User.find({ firebaseId: req.firebaseId });
-  console.log(currUser);
-  console.log(currUser.length);
-  if (currUser.length == 0) {
+  let currUser = await User.findOne({ firebaseId: req.firebaseId });
+  console.log("CUR USER: " + currUser);
+  // console.log(currUser.length);
+  console.log("res.file: ")
+  console.log(req.file);
+  console.log("res.body: ")
+  console.log(req.body);
+  if (currUser == null) {
     return res.status(400).json({ message: "Parent User does not exist" });
   }
 
