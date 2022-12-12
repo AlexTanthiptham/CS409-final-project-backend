@@ -22,6 +22,7 @@ router.get("/", async (req, res) => {
   if (select != null) {
     select = JSON.parse(select);
   }
+  
   const cursor = {
     limit,
     skip,
@@ -74,8 +75,9 @@ router.get("/:id", getTemplate, (req, res) => {
 // TODO: Implement filter to only allow PDF file uploads
 router.post("/", upload.single("pdf"), async (req, res) => {
   //   console.log(req.file);
+  console.log("Req.Body: ");
   console.log(req.body);
-  console.log("Buffer: ");
+  console.log("Req.File: ");
   console.log(req.file);
   // NOTE: Blocking duplicate template names - remove if not needed
   if (req.body.documentName != null) {
