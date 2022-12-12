@@ -73,10 +73,9 @@ router.get("/:id", getResume, (req, res) => {
 // POST new resume
 router.post("/", upload.single("pdf"), async (req, res) => {
   let currUser = await User.find({ firebaseId: req.firebaseId });
-  if (currUser == null) {
-    console.log(req.body);
-    console.log("Full req");
-    console.log(req);
+  console.log(currUser);
+  console.log(currUser.length);
+  if (currUser.length == 0) {
     return res.status(400).json({ message: "Parent User does not exist" });
   }
 
