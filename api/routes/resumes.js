@@ -73,7 +73,7 @@ router.get("/:id", getResume, (req, res) => {
 
 // POST new resume
 router.post("/", upload.single("pdf"), async (req, res) => {
-  let currUser = await User.findOne({ where: { firebaseId: req.firebaseId } });
+  let currUser = await User.findOne({ firebaseId: req.body.firebaseId });
   console.log(currUser);
   console.log(req.body.firebaseId);
   if (currUser == null) {
@@ -118,7 +118,7 @@ router.put("/:id", getResume, async (req, res) => {
 // 2-way reference: Delete comments, update User's commentIds and resumeIds
 router.delete("/:id", getResume, async (req, res) => {
   // Unassign resume itself and attached comments from User
-  await Comment.deleteMany({ where: { resumeId: req.params.id } }).exec();
+  await Comment.deleteMany({ resumeId: req.params.id }).exec();
 
   try {
     await res.resume.remove();

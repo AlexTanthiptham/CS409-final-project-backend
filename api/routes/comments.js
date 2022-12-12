@@ -52,12 +52,15 @@ router.get("/:id", getComment, (req, res) => {
 // POST new comment
 router.post("/", async (req, res) => {
   // Check if assignedUser - assignedUserName combination exists
-  let currUser = await User.findOne({ where: { firebaseId: req.firebaseId } });
-  if (currUser.length == 0) {
+  let currUser = await User.findOne({ firebaseId: req.body.firebaseId });
+  console.log("Firebase ID" + req.body.firebaseId);
+  console.log("CurrUser: " + currUser);
+  if (currUser == null) {
     return res.status(400).json({ message: "Parent User does not exist" });
   }
 
-  let currResume = await Resume.findById(req.body.resumeId);
+  let currResume = await Resume.findById(req.body.resumeId, { PDFdata: 0 });
+
   if (currResume == null) {
     return res.status(400).json({ message: "Parent resume does not exist" });
   }
