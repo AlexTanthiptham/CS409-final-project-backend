@@ -26,6 +26,7 @@ var allowCrossDomain = function (req, res, next) {
   next();
 };
 app.use(allowCrossDomain);
+app.use(cors());
 
 // Use the body-parser package in our application
 app.use(
@@ -36,8 +37,6 @@ app.use(
 app.use(bodyParser.json());
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-
-app.use(cors());
 
 // Use routes as a module (see index.js)
 require("./routes")(app, router);
