@@ -5,6 +5,7 @@ var express = require("express"),
   secrets = require("./config/secrets"),
   bodyParser = require("body-parser");
 
+var cors = require("cors");
 // Create our Express application
 var app = express();
 
@@ -33,8 +34,11 @@ app.use(
   })
 );
 app.use(bodyParser.json());
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+
+app.use(cors());
+
 // Use routes as a module (see index.js)
 require("./routes")(app, router);
 
